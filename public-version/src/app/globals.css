@@ -1,26 +1,116 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --muted-foreground: #a1a1aa;
+  
+  /* Neon colors */
+  --neon-pink: #ff2d92;
+  --neon-orange: #ff6b35;
+  --neon-purple: #a855f7;
+  --neon-blue: #3b82f6;
+  --neon-green: #22c55e;
+  --neon-cyan: #06b6d4;
+  --neon-yellow: #eab308;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-neon-pink: var(--neon-pink);
+  --color-neon-orange: var(--neon-orange);
+  --color-neon-purple: var(--neon-purple);
+  --color-neon-blue: var(--neon-blue);
+  --color-neon-green: var(--neon-green);
+  --color-neon-cyan: var(--neon-cyan);
+  --color-neon-yellow: var(--neon-yellow);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Gradient backgrounds */
+.gradient-bg-pink-orange {
+  background: linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-orange) 100%);
+}
+
+.gradient-bg-purple-pink {
+  background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-pink) 100%);
+}
+
+.gradient-bg-blue-cyan {
+  background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-cyan) 100%);
+}
+
+.gradient-bg-green-cyan {
+  background: linear-gradient(135deg, var(--neon-green) 0%, var(--neon-cyan) 100%);
+}
+
+.gradient-bg-purple-blue {
+  background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-blue) 100%);
+}
+
+.gradient-bg-orange-yellow {
+  background: linear-gradient(135deg, var(--neon-orange) 0%, var(--neon-yellow) 100%);
+}
+
+/* Gradient text */
+.gradient-text-pink-orange {
+  background: linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-orange) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-purple-pink {
+  background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-pink) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-blue-cyan {
+  background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-green-cyan {
+  background: linear-gradient(135deg, var(--neon-green) 0%, var(--neon-cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow effects */
+.glow-pink {
+  box-shadow: 0 0 20px var(--neon-pink), 0 0 40px rgba(255, 45, 146, 0.3);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px var(--neon-purple), 0 0 40px rgba(168, 85, 247, 0.3);
+}
+
+.glow-blue {
+  box-shadow: 0 0 20px var(--neon-blue), 0 0 40px rgba(59, 130, 246, 0.3);
+}
+
+.glow-green {
+  box-shadow: 0 0 20px var(--neon-green), 0 0 40px rgba(34, 197, 94, 0.3);
+}
+
+.text-glow-pink {
+  text-shadow: 0 0 10px var(--neon-pink), 0 0 20px rgba(255, 45, 146, 0.5);
+}
+
+.text-glow-purple {
+  text-shadow: 0 0 10px var(--neon-purple), 0 0 20px rgba(168, 85, 247, 0.5);
 }

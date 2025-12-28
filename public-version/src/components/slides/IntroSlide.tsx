@@ -2,8 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { StaggerContainer, StaggerItem } from "../animations/StaggerAnimations";
-import CounterAnimation from "../animations/CounterAnimation";
+import { Sparkles, Code2 } from "lucide-react";
 import { GitHubUser } from "@/types/stats";
 
 interface IntroSlideProps {
@@ -13,95 +12,121 @@ interface IntroSlideProps {
 
 export default function IntroSlide({ user, year }: IntroSlideProps) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-900 via-violet-900 to-indigo-900 p-8">
-      <StaggerContainer>
-        <StaggerItem className="mb-6">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 200 }}
-            className="relative"
-          >
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl">
-              <Image
-                src={user.avatar_url}
-                alt={user.name || user.login}
-                width={128}
-                height={128}
-                className="object-cover"
-              />
-            </div>
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.5, type: "spring" }}
-              className="absolute -bottom-2 -right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full"
-            >
-              ✓ Active
-            </motion.div>
-          </motion.div>
-        </StaggerItem>
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6">
+      {/* Background */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-neon-purple/20 via-background to-neon-pink/20"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      />
 
-        <StaggerItem className="text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-2">
-            {user.name || user.login}
-          </h1>
-          <p className="text-white/60 text-lg">@{user.login}</p>
-        </StaggerItem>
+      {/* Floating sparkles */}
+      {[...Array(8)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          style={{
+            left: `${10 + i * 12}%`,
+            top: `${10 + (i % 4) * 20}%`,
+          }}
+          animate={{
+            y: [0, -20, 0],
+            opacity: [0.3, 0.7, 0.3],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 3 + i * 0.5,
+            repeat: Infinity,
+            delay: i * 0.2,
+          }}
+        >
+          <Sparkles className="h-4 w-4 text-neon-pink/40" />
+        </motion.div>
+      ))}
 
-        <StaggerItem className="mt-8 text-center">
-          <motion.div
-            animate={{
-              backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-            }}
-            transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-            className="text-5xl md:text-7xl font-black bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-[length:200%_auto] bg-clip-text text-transparent"
-          >
-            CS Wrapped
-          </motion.div>
-          <div className="text-6xl md:text-8xl font-black text-white mt-2">
-            <CounterAnimation value={year} duration={1} />
-          </div>
-        </StaggerItem>
+      {/* Avatar */}
+      <motion.div
+        initial={{ scale: 0, rotate: -180 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+        className="relative z-10 mb-6"
+      >
+        <div className="w-28 h-28 rounded-full overflow-hidden ring-4 ring-neon-purple/50 glow-purple">
+          <Image
+            src={user.avatar_url}
+            alt={user.name || user.login}
+            width={112}
+            height={112}
+            className="object-cover"
+          />
+        </div>
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.8, type: "spring" }}
+          className="absolute -bottom-2 -right-2 gradient-bg-pink-orange text-background text-xs font-bold px-3 py-1 rounded-full"
+        >
+          ✓ Active
+        </motion.div>
+      </motion.div>
 
-        <StaggerItem className="mt-8">
-          <motion.p
-            className="text-white/70 text-lg text-center max-w-md"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5 }}
-          >
-            Let&apos;s see what you&apos;ve accomplished this year...
-          </motion.p>
-        </StaggerItem>
-      </StaggerContainer>
+      {/* Name */}
+      <motion.h1
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="relative z-10 text-3xl md:text-5xl font-black text-foreground text-center"
+      >
+        {user.name || user.login}
+      </motion.h1>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="relative z-10 text-muted-foreground text-lg mt-2"
+      >
+        @{user.login}
+      </motion.p>
+
+      {/* Year badge */}
+      <motion.div
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.7, type: "spring" }}
+        className="relative z-10 mt-10"
+      >
+        <div className="flex items-center gap-3">
+          <Code2 className="h-8 w-8 text-neon-purple" />
+          <span className="text-6xl md:text-8xl font-black gradient-text-purple-pink">
+            {year}
+          </span>
+        </div>
+      </motion.div>
+
+      <motion.p
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1 }}
+        className="relative z-10 mt-6 text-lg uppercase tracking-widest text-muted-foreground"
+      >
+        Your year in code
+      </motion.p>
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 2 }}
-        className="absolute bottom-8"
+        transition={{ delay: 1.5 }}
+        className="relative z-10 mt-12 text-muted-foreground/50 text-sm flex items-center gap-2"
       >
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="text-white/50 text-center"
+        <span>Tap to continue</span>
+        <motion.span
+          animate={{ x: [0, 5, 0] }}
+          transition={{ duration: 1, repeat: Infinity }}
         >
-          <p className="text-sm mb-2">Tap to continue</p>
-          <svg
-            className="w-6 h-6 mx-auto"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 14l-7 7m0 0l-7-7m7 7V3"
-            />
-          </svg>
-        </motion.div>
+          →
+        </motion.span>
       </motion.div>
     </div>
   );

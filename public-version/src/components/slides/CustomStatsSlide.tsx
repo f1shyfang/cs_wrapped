@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { StaggerContainer, StaggerItem } from "../animations/StaggerAnimations";
+import { Award, GraduationCap, Coffee, Moon, Rocket, PartyPopper, MessageSquare, Heart } from "lucide-react";
 import CounterAnimation from "../animations/CounterAnimation";
 import { CustomStats } from "@/types/stats";
 
@@ -10,176 +10,185 @@ interface CustomStatsSlideProps {
 }
 
 export default function CustomStatsSlide({ stats }: CustomStatsSlideProps) {
-  const hasHackathons = stats.hackathonsAttended > 0 || stats.hackathonWins > 0;
-  const hasLearning = stats.coursesCompleted > 0 || stats.certificationsEarned.length > 0;
-  const hasAI = stats.lyraConversations > 0;
-  const hasFun = stats.coffeeCups > 0 || stats.allNighters > 0;
-
-  if (!hasHackathons && !hasLearning && !hasAI && !hasFun) {
-    return null;
-  }
-
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-cyan-900 via-teal-900 to-green-900 p-8">
-      <StaggerContainer>
-        <StaggerItem>
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6">
+      {/* Background */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-neon-yellow/10 via-background to-neon-orange/20"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      />
+
+      {/* Floating party icons */}
+      {[...Array(8)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          style={{
+            left: `${5 + i * 12}%`,
+            top: `${10 + (i % 4) * 22}%`,
+          }}
+          animate={{
+            y: [0, -15, 0],
+            rotate: [0, 20, -20, 0],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            duration: 2.5 + i * 0.3,
+            repeat: Infinity,
+            delay: i * 0.2,
+          }}
+        >
+          {i % 3 === 0 ? (
+            <PartyPopper className="h-5 w-5 text-neon-yellow/30" />
+          ) : i % 3 === 1 ? (
+            <Rocket className="h-5 w-5 text-neon-orange/30" />
+          ) : (
+            <Coffee className="h-5 w-5 text-neon-pink/30" />
+          )}
+        </motion.div>
+      ))}
+
+      <motion.p
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="relative z-10 text-lg uppercase tracking-widest text-muted-foreground"
+      >
+        Your achievements
+      </motion.p>
+
+      {/* Hackathons */}
+      {stats.hackathonsAttended > 0 && (
+        <motion.div
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.4, type: "spring" }}
+          className="relative z-10 my-6 text-center"
+        >
           <motion.div
-            initial={{ rotate: -180, scale: 0 }}
-            animate={{ rotate: 0, scale: 1 }}
-            transition={{ type: "spring", stiffness: 200 }}
-            className="text-8xl mb-4"
+            className="flex items-center justify-center gap-3"
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
           >
-            ✨
+            <Rocket className="h-10 w-10 text-neon-orange" />
+            <span className="text-6xl md:text-8xl font-black gradient-text-orange-yellow">
+              <CounterAnimation value={stats.hackathonsAttended} duration={2} />
+            </span>
           </motion.div>
-        </StaggerItem>
+          <span className="text-lg text-muted-foreground">
+            hackathons attended 
+            {stats.hackathonWins > 0 && ` (${stats.hackathonWins} wins! 🏆)`}
+          </span>
+        </motion.div>
+      )}
 
-        <StaggerItem className="text-center mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-white">
-            Beyond the Code
-          </h2>
-          <p className="text-white/60 mt-2">Your other achievements this year</p>
-        </StaggerItem>
-
-        <StaggerItem>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-2xl">
-            {hasHackathons && (
-              <>
-                {stats.hackathonsAttended > 0 && (
-                  <AchievementCard
-                    emoji="🏆"
-                    value={stats.hackathonsAttended}
-                    label="Hackathons"
-                    delay={0.2}
-                  />
-                )}
-                {stats.hackathonWins > 0 && (
-                  <AchievementCard
-                    emoji="🥇"
-                    value={stats.hackathonWins}
-                    label="Wins/Prizes"
-                    delay={0.3}
-                  />
-                )}
-              </>
-            )}
-
-            {hasAI && (
-              <AchievementCard
-                emoji="💬"
-                value={stats.lyraConversations}
-                label="Lyra Chats"
-                delay={0.4}
-              />
-            )}
-
-            {hasLearning && (
-              <>
-                {stats.coursesCompleted > 0 && (
-                  <AchievementCard
-                    emoji="📚"
-                    value={stats.coursesCompleted}
-                    label="Courses"
-                    delay={0.5}
-                  />
-                )}
-                {stats.certificationsEarned.length > 0 && (
-                  <AchievementCard
-                    emoji="🎓"
-                    value={stats.certificationsEarned.length}
-                    label="Certifications"
-                    delay={0.6}
-                  />
-                )}
-              </>
-            )}
-
-            {hasFun && (
-              <>
-                {stats.coffeeCups > 0 && (
-                  <AchievementCard
-                    emoji="☕"
-                    value={stats.coffeeCups}
-                    label="Coffee Cups"
-                    delay={0.7}
-                  />
-                )}
-                {stats.allNighters > 0 && (
-                  <AchievementCard
-                    emoji="🌙"
-                    value={stats.allNighters}
-                    label="All-Nighters"
-                    delay={0.8}
-                  />
-                )}
-              </>
-            )}
-          </div>
-        </StaggerItem>
-
+      {/* Stats grid */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7 }}
+        className="relative z-10 flex flex-wrap justify-center gap-4 mt-4 max-w-md"
+      >
         {stats.certificationsEarned.length > 0 && (
-          <StaggerItem className="mt-8">
-            <h3 className="text-lg text-white/70 mb-4 text-center">
-              Certifications Earned
-            </h3>
-            <div className="flex flex-wrap justify-center gap-2">
-              {stats.certificationsEarned.map((cert, index) => (
-                <motion.span
-                  key={cert}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 1 + index * 0.1 }}
-                  className="bg-teal-500/30 text-white px-4 py-2 rounded-full text-sm"
-                >
-                  🎓 {cert}
-                </motion.span>
-              ))}
-            </div>
-          </StaggerItem>
-        )}
-
-        {stats.favoriteProject && (
-          <StaggerItem className="mt-8">
+          <div className="text-center px-5 py-3 rounded-xl bg-foreground/5 border border-foreground/10">
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.2 }}
-              className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center"
+              className="flex items-center justify-center gap-2 mb-1"
+              animate={{ rotate: [0, -5, 5, 0] }}
+              transition={{ duration: 3, repeat: Infinity }}
             >
-              <p className="text-white/70 mb-2">Favorite Project</p>
-              <p className="text-2xl font-bold text-white">
-                ⭐ {stats.favoriteProject}
-              </p>
+              <Award className="h-5 w-5 text-neon-yellow" />
+              <span className="text-2xl font-bold text-neon-yellow">
+                <CounterAnimation value={stats.certificationsEarned.length} duration={2} />
+              </span>
             </motion.div>
-          </StaggerItem>
+            <span className="text-xs text-muted-foreground">certifications</span>
+          </div>
         )}
-      </StaggerContainer>
-    </div>
-  );
-}
 
-function AchievementCard({
-  emoji,
-  value,
-  label,
-  delay,
-}: {
-  emoji: string;
-  value: number;
-  label: string;
-  delay: number;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay }}
-      className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center"
-    >
-      <div className="text-3xl mb-2">{emoji}</div>
-      <div className="text-2xl font-bold text-white">
-        <CounterAnimation value={value} duration={1.5} />
-      </div>
-      <div className="text-sm text-white/60">{label}</div>
-    </motion.div>
+        {stats.coursesCompleted > 0 && (
+          <div className="text-center px-5 py-3 rounded-xl bg-foreground/5 border border-foreground/10">
+            <motion.div
+              className="flex items-center justify-center gap-2 mb-1"
+              animate={{ y: [0, -3, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <GraduationCap className="h-5 w-5 text-neon-green" />
+              <span className="text-2xl font-bold text-neon-green">
+                <CounterAnimation value={stats.coursesCompleted} duration={2} />
+              </span>
+            </motion.div>
+            <span className="text-xs text-muted-foreground">courses</span>
+          </div>
+        )}
+
+        {stats.lyraConversations > 0 && (
+          <div className="text-center px-5 py-3 rounded-xl bg-foreground/5 border border-foreground/10">
+            <motion.div
+              className="flex items-center justify-center gap-2 mb-1"
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <MessageSquare className="h-5 w-5 text-neon-purple" />
+              <span className="text-2xl font-bold text-neon-purple">
+                <CounterAnimation value={stats.lyraConversations} duration={2} />
+              </span>
+            </motion.div>
+            <span className="text-xs text-muted-foreground">coffee chats</span>
+          </div>
+        )}
+      </motion.div>
+
+      {/* Fun stats */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1 }}
+        className="relative z-10 mt-6 flex flex-wrap justify-center gap-4"
+      >
+        {stats.coffeeCups > 0 && (
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full gradient-bg-orange-yellow">
+            <Coffee className="h-4 w-4" />
+            <span className="font-semibold">{stats.coffeeCups} coffees ☕</span>
+          </div>
+        )}
+
+        {stats.allNighters > 0 && (
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full gradient-bg-purple-pink">
+            <Moon className="h-4 w-4" />
+            <span className="font-semibold">{stats.allNighters} all-nighters 🌙</span>
+          </div>
+        )}
+      </motion.div>
+
+      {/* Favorite project */}
+      {stats.favoriteProject && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.3 }}
+          className="relative z-10 mt-6 flex items-center gap-2 text-muted-foreground"
+        >
+          <Heart className="h-4 w-4 text-neon-pink" />
+          <span>Favorite project: <span className="text-neon-pink font-semibold">{stats.favoriteProject}</span></span>
+        </motion.div>
+      )}
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+        className="relative z-10 mt-6 text-center text-muted-foreground"
+      >
+        {stats.hackathonsAttended >= 5
+          ? "Hackathon veteran! 🏆"
+          : stats.certificationsEarned.length >= 5
+          ? "Certified professional! 📜"
+          : stats.allNighters >= 10
+          ? "Night owl coder! 🦉"
+          : "Building your achievements! 🌟"}
+      </motion.p>
+    </div>
   );
 }

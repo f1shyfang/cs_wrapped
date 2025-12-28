@@ -12,7 +12,8 @@ import LeetCodeSlide from "./slides/LeetCodeSlide";
 import CodeforcesSlide from "./slides/CodeforcesSlide";
 import CustomStatsSlide from "./slides/CustomStatsSlide";
 import SummarySlide from "./slides/SummarySlide";
-import { ChevronLeft, ChevronRight, Home } from "lucide-react";
+import ProgressBar from "./ProgressBar";
+import { Home } from "lucide-react";
 
 interface WrappedViewerProps {
   data: WrappedData;
@@ -135,7 +136,7 @@ export default function WrappedViewer({ data, onReset }: WrappedViewerProps) {
         const dataUrl = await toPng(exportRef.current, {
           quality: 1,
           pixelRatio: 2,
-          skipFonts: true, // Skip web fonts to avoid parsing errors
+          skipFonts: true,
           backgroundColor: '#000000',
         });
 
@@ -168,27 +169,22 @@ export default function WrappedViewer({ data, onReset }: WrappedViewerProps) {
     const handleWheel = (e: WheelEvent) => {
       const now = Date.now();
       
-      // Debounce scroll events (minimum 800ms between slides)
       if (now - lastScrollTime.current < 800) {
         return;
       }
 
-      // Clear any pending timeout
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
       }
 
-      // Set a timeout to handle the scroll
       scrollTimeoutRef.current = setTimeout(() => {
         if (e.deltaY > 0) {
-          // Scrolling down - next slide
           if (currentSlide < slides.length - 1) {
             setDirection("right");
             setCurrentSlide((prev) => prev + 1);
             lastScrollTime.current = Date.now();
           }
         } else if (e.deltaY < 0) {
-          // Scrolling up - previous slide
           if (currentSlide > 0) {
             setDirection("left");
             setCurrentSlide((prev) => prev - 1);
@@ -210,11 +206,20 @@ export default function WrappedViewer({ data, onReset }: WrappedViewerProps) {
 
   return (
     <div
-      className="relative w-full h-screen overflow-hidden bg-black"
+      className="relative w-full h-screen overflow-hidden bg-background"
       onClick={nextSlide}
       onKeyDown={handleKeyDown}
       tabIndex={0}
     >
+      {/* Story-style progress bar at top */}
+      <ProgressBar
+        totalSlides={slides.length}
+        currentSlide={currentSlide}
+        onSlideClick={(index) => {
+          goToSlide(index);
+        }}
+      />
+
       {/* Slide container */}
       <div ref={exportRef} className="w-full h-full">
         <AnimatePresence mode="wait" custom={direction}>
@@ -242,72 +247,35 @@ export default function WrappedViewer({ data, onReset }: WrappedViewerProps) {
           e.stopPropagation();
           onReset();
         }}
-        className="absolute top-6 left-6 p-3 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/20 transition-all z-10 shadow-lg"
+        className="absolute top-16 left-6 p-3 rounded-full bg-foreground/10 backdrop-blur-md hover:bg-foreground/20 border border-foreground/20 transition-all z-10 shadow-lg"
       >
-        <Home className="w-6 h-6 text-white" />
+        <Home className="w-5 h-5 text-foreground" />
       </motion.button>
 
-      {/* Navigation arrows */}
-      {currentSlide > 0 && (
-        <motion.button
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          whileHover={{ scale: 1.1, x: -5 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={(e) => {
-            e.stopPropagation();
-            prevSlide();
-          }}
-          className="absolute left-6 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/20 transition-all shadow-lg"
-        >
-          <ChevronLeft className="w-8 h-8 text-white" />
-        </motion.button>
-      )}
-
-      {currentSlide < slides.length - 1 && (
-        <motion.button
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          whileHover={{ scale: 1.1, x: 5 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={(e) => {
-            e.stopPropagation();
-            nextSlide();
-          }}
-          className="absolute right-6 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/20 transition-all shadow-lg"
-        >
-          <ChevronRight className="w-8 h-8 text-white" />
-        </motion.button>
-      )}
-
-      {/* Progress dots */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3 bg-black/30 backdrop-blur-md px-6 py-3 rounded-full border border-white/10">
-        {slides.map((slide, index) => (
-          <motion.button
-            key={slide.id}
-            onClick={(e) => {
-              e.stopPropagation();
-              goToSlide(index);
-            }}
-            whileHover={{ scale: 1.3 }}
-            whileTap={{ scale: 0.9 }}
-            className={`w-2.5 h-2.5 rounded-full transition-all ${
-              index === currentSlide
-                ? "bg-white scale-150 shadow-lg shadow-white/50"
-                : "bg-white/40 hover:bg-white/70"
-            }`}
-          />
-        ))}
-      </div>
+      {/* Tap areas for navigation */}
+      <div
+        className="absolute left-0 top-0 w-1/3 h-full z-5 cursor-pointer"
+        onClick={(e) => {
+          e.stopPropagation();
+          prevSlide();
+        }}
+      />
+      <div
+        className="absolute right-0 top-0 w-1/3 h-full z-5 cursor-pointer"
+        onClick={(e) => {
+          e.stopPropagation();
+          nextSlide();
+        }}
+      />
 
       {/* Keyboard hint */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1 }}
-        className="absolute bottom-4 right-6 text-white/40 text-sm bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10"
+        transition={{ delay: 2 }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 text-muted-foreground text-xs bg-foreground/5 backdrop-blur-sm px-4 py-2 rounded-full border border-foreground/10"
       >
-        Scroll, press →, or tap to continue
+        Tap sides or scroll to navigate
       </motion.div>
     </div>
   );

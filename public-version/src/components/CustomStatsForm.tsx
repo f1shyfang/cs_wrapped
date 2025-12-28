@@ -301,7 +301,7 @@ export default function CustomStatsForm({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-white/70 text-sm mb-2">
-                    💬 Lyra Conversations
+                    ☕ Coffee Chats
                   </label>
                   <input
                     type="number"

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { StaggerContainer, StaggerItem } from "../animations/StaggerAnimations";
+import { GitCommit, GitPullRequest, Flame, FolderGit2 } from "lucide-react";
 import CounterAnimation from "../animations/CounterAnimation";
 import { CustomStats } from "@/types/stats";
 
@@ -10,119 +10,125 @@ interface ContributionsSlideProps {
   totalRepos: number;
 }
 
-export default function ContributionsSlide({
-  stats,
-  totalRepos,
-}: ContributionsSlideProps) {
-  const total = stats.totalCommits || 0;
-
-  const getFunComparison = (count: number) => {
-    if (count > 1000) return "That's more commits than coffee breaks! ☕";
-    if (count > 500) return "You've been on fire this year! 🔥";
-    if (count > 200) return "Consistency is your superpower! 💪";
-    if (count > 0) return "Every contribution counts! 🌟";
-    return "Ready to start your journey! 🚀";
-  };
-
+export default function ContributionsSlide({ stats, totalRepos }: ContributionsSlideProps) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-900 via-emerald-900 to-teal-900 p-8">
-      <StaggerContainer>
-        <StaggerItem>
-          <motion.div
-            initial={{ rotate: -180, scale: 0 }}
-            animate={{ rotate: 0, scale: 1 }}
-            transition={{ type: "spring", stiffness: 200 }}
-            className="text-8xl mb-4"
-          >
-            📊
-          </motion.div>
-        </StaggerItem>
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6">
+      {/* Background */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-neon-green/20 via-background to-neon-cyan/20"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      />
 
-        {total > 0 ? (
-          <>
-            <StaggerItem className="text-center">
-              <h2 className="text-2xl text-white/70 mb-2">You made</h2>
-              <div className="text-6xl md:text-8xl font-black text-white">
-                <CounterAnimation value={total} duration={2.5} />
-              </div>
-              <p className="text-2xl text-white/70 mt-2">commits this year</p>
-            </StaggerItem>
+      {/* Floating git icons */}
+      {[...Array(6)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          style={{
+            left: `${10 + i * 15}%`,
+            top: `${15 + (i % 3) * 25}%`,
+          }}
+          animate={{
+            y: [0, -20, 0],
+            rotate: [0, 10, -10, 0],
+          }}
+          transition={{
+            duration: 3 + i * 0.3,
+            repeat: Infinity,
+            delay: i * 0.2,
+          }}
+        >
+          <GitCommit className="h-5 w-5 text-neon-green/30" />
+        </motion.div>
+      ))}
 
-            <StaggerItem className="mt-8">
-              <motion.p
-                className="text-xl text-emerald-300 text-center"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.5 }}
-              >
-                {getFunComparison(total)}
-              </motion.p>
-            </StaggerItem>
-          </>
-        ) : (
-          <StaggerItem className="text-center">
-            <h2 className="text-2xl text-white/70 mb-4">Your Public Repos</h2>
-            <div className="text-6xl md:text-8xl font-black text-white">
-              <CounterAnimation value={totalRepos} duration={2} />
+      <motion.p
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="relative z-10 text-lg uppercase tracking-widest text-muted-foreground"
+      >
+        Your coding activity
+      </motion.p>
+
+      {/* Main commits stat */}
+      <motion.div
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.4, type: "spring" }}
+        className="relative z-10 my-8 text-center"
+      >
+        <motion.div
+          className="flex items-center justify-center gap-3"
+          animate={{ scale: [1, 1.02, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <GitCommit className="h-12 w-12 text-neon-green" />
+          <span className="text-7xl md:text-9xl font-black gradient-text-green-cyan">
+            <CounterAnimation value={stats.totalCommits} duration={2} />
+          </span>
+        </motion.div>
+        <span className="text-xl text-muted-foreground">commits this year</span>
+      </motion.div>
+
+      {/* Stats grid */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7 }}
+        className="relative z-10 flex flex-wrap justify-center gap-4 max-w-lg"
+      >
+        {stats.totalPRs > 0 && (
+          <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-foreground/5 border border-foreground/10">
+            <GitPullRequest className="h-5 w-5 text-neon-purple" />
+            <div>
+              <span className="text-xl font-bold text-neon-purple">
+                <CounterAnimation value={stats.totalPRs} duration={2} />
+              </span>
+              <span className="text-sm text-muted-foreground ml-2">PRs</span>
             </div>
-            <p className="text-xl text-white/70 mt-2">repositories created</p>
-          </StaggerItem>
+          </div>
         )}
 
-        <StaggerItem className="mt-12">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-            {stats.totalPRs > 0 && (
-              <StatBox
-                icon="🔀"
-                value={stats.totalPRs}
-                label="Pull Requests"
-                delay={0.2}
-              />
-            )}
-            {stats.longestStreak > 0 && (
-              <StatBox
-                icon="🔥"
-                value={stats.longestStreak}
-                label="Day Streak"
-                delay={0.4}
-              />
-            )}
-            <StatBox
-              icon="📁"
-              value={totalRepos}
-              label="Public Repos"
-              delay={0.6}
-            />
+        {stats.longestStreak > 0 && (
+          <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-foreground/5 border border-foreground/10">
+            <Flame className="h-5 w-5 text-neon-orange" />
+            <div>
+              <span className="text-xl font-bold text-neon-orange">
+                <CounterAnimation value={stats.longestStreak} duration={2} />
+              </span>
+              <span className="text-sm text-muted-foreground ml-2">day streak</span>
+            </div>
           </div>
-        </StaggerItem>
-      </StaggerContainer>
-    </div>
-  );
-}
+        )}
 
-function StatBox({
-  icon,
-  value,
-  label,
-  delay,
-}: {
-  icon: string;
-  value: number;
-  label: string;
-  delay: number;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay }}
-      className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center"
-    >
-      <div className="text-3xl mb-2">{icon}</div>
-      <div className="text-2xl font-bold text-white">
-        <CounterAnimation value={value} duration={1.5} />
-      </div>
-      <div className="text-sm text-white/60">{label}</div>
-    </motion.div>
+        <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-foreground/5 border border-foreground/10">
+          <FolderGit2 className="h-5 w-5 text-neon-blue" />
+          <div>
+            <span className="text-xl font-bold text-neon-blue">
+              <CounterAnimation value={totalRepos} duration={2} />
+            </span>
+            <span className="text-sm text-muted-foreground ml-2">repos</span>
+          </div>
+        </div>
+      </motion.div>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2 }}
+        className="relative z-10 mt-8 text-center text-muted-foreground"
+      >
+        {stats.totalCommits >= 1000
+          ? "You're a commit machine! 🔥"
+          : stats.totalCommits >= 500
+          ? "Impressive dedication! 💪"
+          : stats.totalCommits >= 100
+          ? "Building momentum! 🚀"
+          : "Every commit counts! ✨"}
+      </motion.p>
+    </div>
   );
 }

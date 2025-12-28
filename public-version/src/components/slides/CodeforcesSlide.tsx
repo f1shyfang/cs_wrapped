@@ -1,144 +1,170 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { StaggerContainer, StaggerItem } from "../animations/StaggerAnimations";
+import { Trophy, TrendingUp, Award, Flame } from "lucide-react";
 import CounterAnimation from "../animations/CounterAnimation";
 import { CodeforcesStats } from "@/types/stats";
-import { Trophy, TrendingUp, Award, Code2 } from "lucide-react";
 
 interface CodeforcesSlideProps {
   stats: CodeforcesStats;
 }
 
-// Rank colors based on Codeforces rating system
 const getRankColor = (rank: string): string => {
-  const lowerRank = rank.toLowerCase();
-  if (lowerRank.includes("legend") || lowerRank.includes("grandmaster")) return "from-red-500 to-orange-500";
-  if (lowerRank.includes("master")) return "from-orange-400 to-yellow-400";
-  if (lowerRank.includes("candidate")) return "from-purple-400 to-pink-400";
-  if (lowerRank.includes("expert")) return "from-blue-400 to-cyan-400";
-  if (lowerRank.includes("specialist")) return "from-cyan-400 to-teal-400";
-  if (lowerRank.includes("pupil")) return "from-green-400 to-emerald-400";
-  return "from-gray-400 to-gray-500";
+  const rankLower = rank.toLowerCase();
+  if (rankLower.includes("legendary grandmaster")) return "#FF0000";
+  if (rankLower.includes("international grandmaster")) return "#FF0000";
+  if (rankLower.includes("grandmaster")) return "#FF0000";
+  if (rankLower.includes("international master")) return "#FF8C00";
+  if (rankLower.includes("master")) return "#FF8C00";
+  if (rankLower.includes("candidate master")) return "#AA00AA";
+  if (rankLower.includes("expert")) return "#0000FF";
+  if (rankLower.includes("specialist")) return "#03A89E";
+  if (rankLower.includes("pupil")) return "#008000";
+  return "#808080"; // newbie
 };
 
 export default function CodeforcesSlide({ stats }: CodeforcesSlideProps) {
-  const rankGradient = getRankColor(stats.rank);
-  const maxRankGradient = getRankColor(stats.maxRank);
+  const rankColor = getRankColor(stats.rank || "newbie");
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 p-8">
-      <StaggerContainer>
-        {/* Icon */}
-        <StaggerItem className="mb-8">
-          <motion.div
-            animate={{
-              rotate: [0, 10, -10, 0],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              repeatDelay: 3,
-            }}
-            className="inline-block p-6 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-3xl shadow-2xl"
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6">
+      {/* Background */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-neon-cyan/20 via-background to-neon-blue/20"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      />
+
+      {/* Floating trophies */}
+      {[...Array(6)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          style={{
+            left: `${10 + i * 15}%`,
+            top: `${15 + (i % 3) * 25}%`,
+          }}
+          animate={{
+            y: [0, -20, 0],
+            rotate: [0, 10, -10, 0],
+          }}
+          transition={{
+            duration: 3 + i * 0.3,
+            repeat: Infinity,
+            delay: i * 0.3,
+          }}
+        >
+          <Trophy className="h-5 w-5 text-neon-cyan/30" />
+        </motion.div>
+      ))}
+
+      <motion.p
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="relative z-10 text-lg uppercase tracking-widest text-muted-foreground"
+      >
+        Codeforces ranking
+      </motion.p>
+
+      {/* Rank badge */}
+      <motion.div
+        initial={{ scale: 0, rotate: -180 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ delay: 0.4, type: "spring", stiffness: 200 }}
+        className="relative z-10 my-6"
+      >
+        <div
+          className="rounded-2xl px-8 py-4 border-2"
+          style={{
+            backgroundColor: `${rankColor}20`,
+            borderColor: rankColor,
+          }}
+        >
+          <motion.p
+            className="text-3xl md:text-4xl font-black uppercase tracking-wider"
+            style={{ color: rankColor }}
+            animate={{ textShadow: [`0 0 10px ${rankColor}40`, `0 0 20px ${rankColor}60`, `0 0 10px ${rankColor}40`] }}
+            transition={{ duration: 2, repeat: Infinity }}
           >
-            <Trophy className="w-16 h-16 text-white" />
-          </motion.div>
-        </StaggerItem>
+            {stats.rank || "Unrated"}
+          </motion.p>
+        </div>
+      </motion.div>
 
-        {/* Title */}
-        <StaggerItem>
-          <h1 className="text-5xl md:text-7xl font-black text-white mb-4 text-center">
-            Codeforces
-          </h1>
-        </StaggerItem>
+      {/* Rating */}
+      <motion.div
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.6, type: "spring" }}
+        className="relative z-10 text-center"
+      >
+        <motion.div
+          className="flex items-center justify-center gap-3"
+          animate={{ scale: [1, 1.03, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <TrendingUp className="h-10 w-10 text-neon-cyan" />
+          <span className="text-6xl md:text-8xl font-black gradient-text-cyan-blue">
+            <CounterAnimation value={stats.rating} duration={2} />
+          </span>
+        </motion.div>
+        <span className="text-lg text-muted-foreground">current rating</span>
+      </motion.div>
 
-        <StaggerItem>
-          <p className="text-white/70 text-xl mb-12 text-center">
-            Competitive Programming Journey
-          </p>
-        </StaggerItem>
-
-        {/* Stats Grid */}
-        <StaggerItem className="w-full max-w-3xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {/* Current Rating */}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <TrendingUp className="w-6 h-6 text-blue-400" />
-                <h3 className="text-white/70 text-lg">Current Rating</h3>
-              </div>
-              <div className={`text-5xl font-black bg-gradient-to-r ${rankGradient} bg-clip-text text-transparent`}>
-                <CounterAnimation value={stats.rating} duration={1.5} />
-              </div>
-              <p className={`mt-2 text-lg font-semibold bg-gradient-to-r ${rankGradient} bg-clip-text text-transparent capitalize`}>
-                {stats.rank}
-              </p>
-            </motion.div>
-
-            {/* Max Rating */}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <Award className="w-6 h-6 text-orange-400" />
-                <h3 className="text-white/70 text-lg">Peak Rating</h3>
-              </div>
-              <div className={`text-5xl font-black bg-gradient-to-r ${maxRankGradient} bg-clip-text text-transparent`}>
-                <CounterAnimation value={stats.maxRating} duration={1.5} />
-              </div>
-              <p className={`mt-2 text-lg font-semibold bg-gradient-to-r ${maxRankGradient} bg-clip-text text-transparent capitalize`}>
-                {stats.maxRank}
-              </p>
-            </motion.div>
-
-            {/* Problems Solved */}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <Code2 className="w-6 h-6 text-green-400" />
-                <h3 className="text-white/70 text-lg">Problems Solved</h3>
-              </div>
-              <div className="text-5xl font-black bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
-                <CounterAnimation value={stats.problemsSolved} duration={2} />
-              </div>
-            </motion.div>
-
-            {/* Contests */}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <Trophy className="w-6 h-6 text-purple-400" />
-                <h3 className="text-white/70 text-lg">Contests</h3>
-              </div>
-              <div className="text-5xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                <CounterAnimation value={stats.contestsParticipated} duration={1.5} />
-              </div>
-            </motion.div>
-          </div>
-        </StaggerItem>
-
-        {/* Handle */}
-        <StaggerItem>
+      {/* Stats */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.9 }}
+        className="relative z-10 mt-8 flex gap-6"
+      >
+        <div className="text-center px-6 py-4 rounded-xl bg-foreground/5 border border-foreground/10">
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center bg-white/5 backdrop-blur-sm rounded-2xl px-8 py-4 border border-white/10"
+            className="flex items-center justify-center gap-2 mb-1"
+            animate={{ y: [0, -3, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
           >
-            <p className="text-white/60 text-sm mb-1">Handle</p>
-            <p className="text-white text-2xl font-bold">@{stats.handle}</p>
+            <Award className="h-5 w-5 text-neon-yellow" />
+            <span className="text-2xl font-bold text-neon-yellow">
+              <CounterAnimation value={stats.maxRating} duration={2} />
+            </span>
           </motion.div>
-        </StaggerItem>
-      </StaggerContainer>
+          <span className="text-xs text-muted-foreground">peak rating</span>
+        </div>
+
+        <div className="text-center px-6 py-4 rounded-xl bg-foreground/5 border border-foreground/10">
+          <motion.div
+            className="flex items-center justify-center gap-2 mb-1"
+            animate={{ y: [0, -3, 0] }}
+            transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+          >
+            <Flame className="h-5 w-5 text-neon-orange" />
+            <span className="text-2xl font-bold text-neon-orange">
+              <CounterAnimation value={stats.contribution} duration={2} />
+            </span>
+          </motion.div>
+          <span className="text-xs text-muted-foreground">contribution</span>
+        </div>
+      </motion.div>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.3 }}
+        className="relative z-10 mt-8 text-center text-muted-foreground"
+      >
+        {stats.rating >= 2400
+          ? "Grandmaster! You're elite! 🏆"
+          : stats.rating >= 1900
+          ? "Candidate Master! Almost there! 💪"
+          : stats.rating >= 1600
+          ? "Expert level! Keep grinding! 🔥"
+          : stats.rating >= 1400
+          ? "Specialist! Growing strong! 📈"
+          : "Keep solving and climbing! 🚀"}
+      </motion.p>
     </div>
   );
 }
