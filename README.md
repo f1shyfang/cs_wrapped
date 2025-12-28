@@ -2,17 +2,64 @@
 
 **Your Year in Code, Beautifully Visualized**
 
-A Spotify Wrapped-style web application that creates beautiful, animated visualizations of your coding year using GitHub data.
+A Spotify Wrapped-style web application that creates beautiful, animated visualizations of your coding year.
+
+## Project Structure
+
+```
+cs_wrapped/
+├── frontend/         # OAuth-based version (requires GitHub login)
+│   └── ...           # Full access to private repos & contribution data
+│
+└── public-version/   # Public API version (no login required)
+    └── ...           # Uses public GitHub data + manual input
+```
+
+## Versions
+
+### 🔐 Frontend (OAuth Version)
+Full-featured version that requires GitHub OAuth authentication.
+- Access to private repository data
+- Full contribution graph from GitHub API
+- Accurate commit counts and streaks
+
+**Setup:**
+```bash
+cd frontend
+npm install
+# Configure .env.local with GitHub OAuth credentials
+npm run dev
+```
+
+### 🌐 Public Version (No Login Required)
+Lightweight version that uses only public GitHub API.
+- No authentication needed
+- Enter any GitHub username
+- Add custom stats manually (commits, LeetCode, hackathons, etc.)
+- Data saved in browser localStorage
+
+**Setup:**
+```bash
+cd public-version
+npm install
+npm run dev --port 3001
+```
 
 ## Features
 
-- 🔐 **GitHub OAuth Integration** - Securely connect your GitHub account
-- 📊 **Contribution Analytics** - Total commits, PRs, issues, and streaks
-- 💻 **Language Breakdown** - Beautiful pie chart of your most-used languages
-- 🏆 **Top Repositories** - Highlight your best projects
-- ⏰ **Productivity Insights** - Most productive day and month
+Both versions include:
+- 📊 **Contribution Analytics** - Commits, PRs, repos
+- 💻 **Language Breakdown** - Beautiful pie chart visualization
+- 🏆 **Top Repositories** - Your most starred projects
 - 🎨 **Stunning Animations** - Smooth Framer Motion transitions
 - 📸 **Export & Share** - Download as PNG or share on social media
+
+Public version also supports:
+- 🧩 **LeetCode Stats** - Manual entry of problems solved
+- 🏆 **Hackathon Stats** - Track attendance and wins
+- 💬 **Lyra Conversations** - AI assistant usage
+- 📚 **Courses & Certifications** - Learning achievements
+- ☕ **Fun Stats** - Coffee cups, all-nighters
 
 ## Tech Stack
 
@@ -21,134 +68,7 @@ A Spotify Wrapped-style web application that creates beautiful, animated visuali
 - **Styling**: Tailwind CSS
 - **Animations**: Framer Motion
 - **Charts**: Recharts
-- **Authentication**: NextAuth.js
-- **GitHub API**: Octokit GraphQL
 - **Export**: html-to-image
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+
-- npm or yarn
-- GitHub OAuth App credentials
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/yourusername/cs_wrapped.git
-cd cs_wrapped
-```
-
-### 2. Install dependencies
-
-```bash
-npm install
-```
-
-### 3. Create a GitHub OAuth App
-
-1. Go to [GitHub Developer Settings](https://github.com/settings/developers)
-2. Click "New OAuth App"
-3. Fill in the details:
-   - **Application name**: CS Wrapped
-   - **Homepage URL**: http://localhost:3000
-   - **Authorization callback URL**: http://localhost:3000/api/auth/callback/github
-4. Save your Client ID and Client Secret
-
-### 4. Configure environment variables
-
-Copy the example env file and fill in your credentials:
-
-```bash
-cp .env.example .env.local
-```
-
-Edit `.env.local`:
-
-```env
-GITHUB_ID=your_github_client_id
-GITHUB_SECRET=your_github_client_secret
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your_random_secret_here
-```
-
-Generate a random secret for `NEXTAUTH_SECRET`:
-
-```bash
-openssl rand -base64 32
-```
-
-### 5. Run the development server
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Project Structure
-
-```
-src/
-├── app/
-│   ├── api/
-│   │   ├── auth/[...nextauth]/route.ts  # NextAuth handler
-│   │   └── stats/route.ts               # GitHub stats API
-│   ├── layout.tsx
-│   └── page.tsx
-├── components/
-│   ├── animations/
-│   │   ├── ConfettiEffect.tsx
-│   │   ├── ContributionGraph.tsx
-│   │   ├── CounterAnimation.tsx
-│   │   ├── LanguageChart.tsx
-│   │   ├── ProgressBar.tsx
-│   │   └── StatSlide.tsx
-│   ├── slides/
-│   │   ├── ContributionsSlide.tsx
-│   │   ├── IntroSlide.tsx
-│   │   ├── LanguagesSlide.tsx
-│   │   ├── ProductivitySlide.tsx
-│   │   ├── RepositoriesSlide.tsx
-│   │   └── SummarySlide.tsx
-│   ├── CustomStatsForm.tsx
-│   ├── HomePage.tsx
-│   ├── LoginButton.tsx
-│   ├── Providers.tsx
-│   └── WrappedViewer.tsx
-├── lib/
-│   ├── auth.ts                          # NextAuth configuration
-│   └── github.ts                        # GitHub API functions
-└── types/
-    └── github.ts                        # TypeScript interfaces
-```
-
-## Customization
-
-### Adding Custom Stats
-
-You can extend the wrapped experience with custom stats like:
-- LeetCode problems solved
-- Hackathon attendance
-- Certifications earned
-- Conversations with AI assistants (Lyra!)
-
-Edit `src/types/github.ts` to add new stat types, then create corresponding slide components.
-
-### Adding New Slides
-
-1. Create a new slide component in `src/components/slides/`
-2. Add it to the `slides` array in `src/components/WrappedViewer.tsx`
-
-## Deployment
-
-### Vercel (Recommended)
-
-1. Push your code to GitHub
-2. Import the project in Vercel
-3. Add your environment variables
-4. Update your GitHub OAuth App callback URL to your production domain
 
 ## License
 
