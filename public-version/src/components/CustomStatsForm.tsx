@@ -86,7 +86,7 @@ export default function CustomStatsForm({
                       }))
                     }
                     placeholder="e.g., 847"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400/50 focus:bg-white/15 transition-all"
                   />
                 </div>
                 <div>
@@ -104,7 +104,7 @@ export default function CustomStatsForm({
                       }))
                     }
                     placeholder="e.g., 52"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400/50 focus:bg-white/15 transition-all"
                   />
                 </div>
                 <div>
@@ -122,7 +122,7 @@ export default function CustomStatsForm({
                       }))
                     }
                     placeholder="e.g., 30"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400/50 focus:bg-white/15 transition-all"
                   />
                 </div>
                 <div>
@@ -139,7 +139,7 @@ export default function CustomStatsForm({
                       }))
                     }
                     placeholder="e.g., my-awesome-app"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400/50 focus:bg-white/15 transition-all"
                   />
                 </div>
               </div>
@@ -178,7 +178,7 @@ export default function CustomStatsForm({
                         }))
                       }
                       placeholder="150"
-                      className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="w-full bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400/50 focus:bg-white/15 transition-all"
                     />
                   </div>
                   <div>
@@ -269,7 +269,7 @@ export default function CustomStatsForm({
                       }))
                     }
                     placeholder="5"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400/50 focus:bg-white/15 transition-all"
                   />
                 </div>
                 <div>
@@ -287,7 +287,7 @@ export default function CustomStatsForm({
                       }))
                     }
                     placeholder="2"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400/50 focus:bg-white/15 transition-all"
                   />
                 </div>
               </div>
@@ -314,7 +314,7 @@ export default function CustomStatsForm({
                       }))
                     }
                     placeholder="100"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400/50 focus:bg-white/15 transition-all"
                   />
                 </div>
                 <div>
@@ -332,7 +332,7 @@ export default function CustomStatsForm({
                       }))
                     }
                     placeholder="8"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400/50 focus:bg-white/15 transition-all"
                   />
                 </div>
               </div>
@@ -349,7 +349,7 @@ export default function CustomStatsForm({
                   value={newCert}
                   onChange={(e) => setNewCert(e.target.value)}
                   placeholder="e.g., AWS Solutions Architect"
-                  className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="flex-1 bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400/50 focus:bg-white/15 transition-all"
                   onKeyDown={(e) => e.key === "Enter" && addCertification()}
                 />
                 <button
@@ -400,7 +400,7 @@ export default function CustomStatsForm({
                       }))
                     }
                     placeholder="365"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400/50 focus:bg-white/15 transition-all"
                   />
                 </div>
                 <div>
@@ -418,7 +418,7 @@ export default function CustomStatsForm({
                       }))
                     }
                     placeholder="12"
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400/50 focus:bg-white/15 transition-all"
                   />
                 </div>
               </div>

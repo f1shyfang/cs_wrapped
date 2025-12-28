@@ -44,6 +44,20 @@ export interface LeetCodeStats {
   easySolved: number;
   mediumSolved: number;
   hardSolved: number;
+  ranking?: number;
+  reputation?: number;
+}
+
+export interface CodeforcesStats {
+  username: string;
+  handle: string;
+  rating: number;
+  maxRating: number;
+  rank: string;
+  maxRank: string;
+  contribution: number;
+  contestsParticipated: number;
+  problemsSolved: number;
 }
 
 export interface CustomStats {
@@ -63,6 +77,7 @@ export interface CustomStats {
 export interface WrappedData {
   github: PublicGitHubStats | null;
   leetcode: LeetCodeStats | null;
+  codeforces: CodeforcesStats | null;
   custom: CustomStats;
   year: number;
 }

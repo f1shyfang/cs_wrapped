@@ -70,6 +70,40 @@ export default function LeetCodeSlide({ stats }: LeetCodeSlideProps) {
           </div>
         </StaggerItem>
 
+        {/* Ranking and Reputation */}
+        {(stats.ranking || stats.reputation) && (
+          <StaggerItem className="mt-8">
+            <div className="flex gap-6 justify-center">
+              {stats.ranking && stats.ranking > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.8 }}
+                  className="bg-white/10 backdrop-blur-md rounded-xl px-6 py-3 border border-white/20"
+                >
+                  <p className="text-white/60 text-sm mb-1">Global Rank</p>
+                  <p className="text-2xl font-bold text-amber-300">
+                    #{stats.ranking.toLocaleString()}
+                  </p>
+                </motion.div>
+              )}
+              {stats.reputation && stats.reputation > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.9 }}
+                  className="bg-white/10 backdrop-blur-md rounded-xl px-6 py-3 border border-white/20"
+                >
+                  <p className="text-white/60 text-sm mb-1">Reputation</p>
+                  <p className="text-2xl font-bold text-amber-300">
+                    {stats.reputation.toLocaleString()}
+                  </p>
+                </motion.div>
+              )}
+            </div>
+          </StaggerItem>
+        )}
+
         <StaggerItem className="mt-8">
           <div className="flex gap-2">
             {/* Visual difficulty bar */}

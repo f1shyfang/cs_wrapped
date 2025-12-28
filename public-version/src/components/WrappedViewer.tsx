@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toPng } from "html-to-image";
 import { WrappedData } from "@/types/stats";
@@ -9,6 +9,7 @@ import ContributionsSlide from "./slides/ContributionsSlide";
 import LanguagesSlide from "./slides/LanguagesSlide";
 import RepositoriesSlide from "./slides/RepositoriesSlide";
 import LeetCodeSlide from "./slides/LeetCodeSlide";
+import CodeforcesSlide from "./slides/CodeforcesSlide";
 import CustomStatsSlide from "./slides/CustomStatsSlide";
 import SummarySlide from "./slides/SummarySlide";
 import { ChevronLeft, ChevronRight, Home } from "lucide-react";
@@ -22,8 +23,10 @@ export default function WrappedViewer({ data, onReset }: WrappedViewerProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState<"left" | "right">("right");
   const exportRef = useRef<HTMLDivElement>(null);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastScrollTime = useRef<number>(0);
 
-  const { github, leetcode, custom, year } = data;
+  const { github, leetcode, codeforces, custom, year } = data;
 
   // Build slides array dynamically based on available data
   const slides: { id: string; component: React.ReactNode }[] = [];
@@ -70,6 +73,13 @@ export default function WrappedViewer({ data, onReset }: WrappedViewerProps) {
     slides.push({
       id: "leetcode",
       component: <LeetCodeSlide stats={leetcode} />,
+    });
+  }
+
+  if (codeforces && codeforces.problemsSolved > 0) {
+    slides.push({
+      id: "codeforces",
+      component: <CodeforcesSlide stats={codeforces} />,
     });
   }
 
@@ -125,6 +135,8 @@ export default function WrappedViewer({ data, onReset }: WrappedViewerProps) {
         const dataUrl = await toPng(exportRef.current, {
           quality: 1,
           pixelRatio: 2,
+          skipFonts: true, // Skip web fonts to avoid parsing errors
+          backgroundColor: '#000000',
         });
 
         const link = document.createElement("a");
@@ -133,6 +145,7 @@ export default function WrappedViewer({ data, onReset }: WrappedViewerProps) {
         link.click();
       } catch (error) {
         console.error("Failed to export image:", error);
+        alert("Failed to export image. Please try again.");
       }
     }
   }
@@ -149,6 +162,51 @@ export default function WrappedViewer({ data, onReset }: WrappedViewerProps) {
     },
     [nextSlide, prevSlide, onReset]
   );
+
+  // Handle scroll navigation
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      const now = Date.now();
+      
+      // Debounce scroll events (minimum 800ms between slides)
+      if (now - lastScrollTime.current < 800) {
+        return;
+      }
+
+      // Clear any pending timeout
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+
+      // Set a timeout to handle the scroll
+      scrollTimeoutRef.current = setTimeout(() => {
+        if (e.deltaY > 0) {
+          // Scrolling down - next slide
+          if (currentSlide < slides.length - 1) {
+            setDirection("right");
+            setCurrentSlide((prev) => prev + 1);
+            lastScrollTime.current = Date.now();
+          }
+        } else if (e.deltaY < 0) {
+          // Scrolling up - previous slide
+          if (currentSlide > 0) {
+            setDirection("left");
+            setCurrentSlide((prev) => prev - 1);
+            lastScrollTime.current = Date.now();
+          }
+        }
+      }, 50);
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: true });
+
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, [currentSlide, slides.length]);
 
   return (
     <div
@@ -175,63 +233,82 @@ export default function WrappedViewer({ data, onReset }: WrappedViewerProps) {
       </div>
 
       {/* Home button */}
-      <button
+      <motion.button
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
         onClick={(e) => {
           e.stopPropagation();
           onReset();
         }}
-        className="absolute top-4 left-4 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors z-10"
+        className="absolute top-6 left-6 p-3 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/20 transition-all z-10 shadow-lg"
       >
         <Home className="w-6 h-6 text-white" />
-      </button>
+      </motion.button>
 
       {/* Navigation arrows */}
       {currentSlide > 0 && (
-        <button
+        <motion.button
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          whileHover={{ scale: 1.1, x: -5 }}
+          whileTap={{ scale: 0.9 }}
           onClick={(e) => {
             e.stopPropagation();
             prevSlide();
           }}
-          className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+          className="absolute left-6 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/20 transition-all shadow-lg"
         >
           <ChevronLeft className="w-8 h-8 text-white" />
-        </button>
+        </motion.button>
       )}
 
       {currentSlide < slides.length - 1 && (
-        <button
+        <motion.button
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          whileHover={{ scale: 1.1, x: 5 }}
+          whileTap={{ scale: 0.9 }}
           onClick={(e) => {
             e.stopPropagation();
             nextSlide();
           }}
-          className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+          className="absolute right-6 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/20 transition-all shadow-lg"
         >
           <ChevronRight className="w-8 h-8 text-white" />
-        </button>
+        </motion.button>
       )}
 
       {/* Progress dots */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3 bg-black/30 backdrop-blur-md px-6 py-3 rounded-full border border-white/10">
         {slides.map((slide, index) => (
-          <button
+          <motion.button
             key={slide.id}
             onClick={(e) => {
               e.stopPropagation();
               goToSlide(index);
             }}
-            className={`w-3 h-3 rounded-full transition-all ${
+            whileHover={{ scale: 1.3 }}
+            whileTap={{ scale: 0.9 }}
+            className={`w-2.5 h-2.5 rounded-full transition-all ${
               index === currentSlide
-                ? "bg-white scale-125"
-                : "bg-white/30 hover:bg-white/50"
+                ? "bg-white scale-150 shadow-lg shadow-white/50"
+                : "bg-white/40 hover:bg-white/70"
             }`}
           />
         ))}
       </div>
 
       {/* Keyboard hint */}
-      <div className="absolute bottom-4 right-4 text-white/30 text-sm">
-        Press → or tap to continue
-      </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1 }}
+        className="absolute bottom-4 right-6 text-white/40 text-sm bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10"
+      >
+        Scroll, press →, or tap to continue
+      </motion.div>
     </div>
   );
 }

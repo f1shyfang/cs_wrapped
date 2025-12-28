@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toPng } from "html-to-image";
 import { GitHubStats } from "@/types/github";
@@ -21,6 +21,8 @@ export default function WrappedViewer({ stats }: WrappedViewerProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState<"left" | "right">("right");
   const exportRef = useRef<HTMLDivElement>(null);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastScrollTime = useRef<number>(0);
 
   const year = new Date().getFullYear();
   const languages = calculateLanguagePercentages(stats.languages);
@@ -106,6 +108,8 @@ export default function WrappedViewer({ stats }: WrappedViewerProps) {
         const dataUrl = await toPng(exportRef.current, {
           quality: 1,
           pixelRatio: 2,
+          skipFonts: true, // Skip web fonts to avoid parsing errors
+          backgroundColor: '#000000',
         });
 
         const link = document.createElement("a");
@@ -114,6 +118,7 @@ export default function WrappedViewer({ stats }: WrappedViewerProps) {
         link.click();
       } catch (error) {
         console.error("Failed to export image:", error);
+        alert("Failed to export image. Please try again.");
       }
     }
   }
@@ -129,6 +134,51 @@ export default function WrappedViewer({ stats }: WrappedViewerProps) {
     },
     [nextSlide, prevSlide]
   );
+
+  // Handle scroll navigation
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      const now = Date.now();
+      
+      // Debounce scroll events (minimum 800ms between slides)
+      if (now - lastScrollTime.current < 800) {
+        return;
+      }
+
+      // Clear any pending timeout
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+
+      // Set a timeout to handle the scroll
+      scrollTimeoutRef.current = setTimeout(() => {
+        if (e.deltaY > 0) {
+          // Scrolling down - next slide
+          if (currentSlide < slides.length - 1) {
+            setDirection("right");
+            setCurrentSlide((prev) => prev + 1);
+            lastScrollTime.current = Date.now();
+          }
+        } else if (e.deltaY < 0) {
+          // Scrolling up - previous slide
+          if (currentSlide > 0) {
+            setDirection("left");
+            setCurrentSlide((prev) => prev - 1);
+            lastScrollTime.current = Date.now();
+          }
+        }
+      }, 50);
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: true });
+
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, [currentSlide, slides.length]);
 
   return (
     <div
@@ -199,7 +249,7 @@ export default function WrappedViewer({ stats }: WrappedViewerProps) {
 
       {/* Keyboard hint */}
       <div className="absolute bottom-4 right-4 text-white/30 text-sm">
-        Press → or tap to continue
+        Scroll, press →, or tap to continue
       </div>
     </div>
   );

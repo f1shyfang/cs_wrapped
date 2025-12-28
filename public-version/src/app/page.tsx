@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import UsernameInput from "@/components/UsernameInput";
+import CompetitiveProgrammingInput from "@/components/CompetitiveProgrammingInput";
 import CustomStatsForm from "@/components/CustomStatsForm";
 import WrappedViewer from "@/components/WrappedViewer";
 import { fetchPublicGitHubStats } from "@/lib/github-public";
@@ -16,15 +17,18 @@ import {
   PublicGitHubStats,
   CustomStats,
   LeetCodeStats,
+  CodeforcesStats,
 } from "@/types/stats";
 
-type AppState = "input" | "customize" | "view";
+type AppState = "input" | "competitive" | "customize" | "view";
 
 export default function Home() {
   const [state, setState] = useState<AppState>("input");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [githubStats, setGithubStats] = useState<PublicGitHubStats | null>(null);
+  const [leetcodeStats, setLeetcodeStats] = useState<LeetCodeStats | null>(null);
+  const [codeforcesStats, setCodeforcesStats] = useState<CodeforcesStats | null>(null);
   const [wrappedData, setWrappedData] = useState<WrappedData | null>(null);
 
   useEffect(() => {
@@ -42,7 +46,7 @@ export default function Home() {
     try {
       const stats = await fetchPublicGitHubStats(username);
       setGithubStats(stats);
-      setState("customize");
+      setState("competitive");
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to fetch GitHub data"
@@ -52,13 +56,23 @@ export default function Home() {
     }
   };
 
+  const handleCompetitiveComplete = (
+    leetcode: LeetCodeStats | null,
+    codeforces: CodeforcesStats | null
+  ) => {
+    setLeetcodeStats(leetcode);
+    setCodeforcesStats(codeforces);
+    setState("customize");
+  };
+
   const handleCustomStatsSave = (
     custom: CustomStats,
     leetcode: LeetCodeStats | null
   ) => {
     const data: WrappedData = {
       github: githubStats,
-      leetcode,
+      leetcode: leetcode || leetcodeStats,
+      codeforces: codeforcesStats,
       custom,
       year: new Date().getFullYear(),
     };
@@ -72,7 +86,8 @@ export default function Home() {
   const handleSkipCustomization = () => {
     const data: WrappedData = {
       github: githubStats,
-      leetcode: null,
+      leetcode: leetcodeStats,
+      codeforces: codeforcesStats,
       custom: loadCustomStats(),
       year: new Date().getFullYear(),
     };
@@ -85,6 +100,8 @@ export default function Home() {
   const handleReset = () => {
     setState("input");
     setGithubStats(null);
+    setLeetcodeStats(null);
+    setCodeforcesStats(null);
     setWrappedData(null);
     setError(null);
   };
@@ -93,11 +110,20 @@ export default function Home() {
     return <WrappedViewer data={wrappedData} onReset={handleReset} />;
   }
 
+  if (state === "competitive") {
+    return (
+      <CompetitiveProgrammingInput
+        onComplete={handleCompetitiveComplete}
+        onSkip={() => setState("customize")}
+      />
+    );
+  }
+
   if (state === "customize") {
     return (
       <CustomStatsForm
         initialStats={loadCustomStats()}
-        initialLeetCode={wrappedData?.leetcode || null}
+        initialLeetCode={leetcodeStats || wrappedData?.leetcode || null}
         onSave={handleCustomStatsSave}
         onSkip={handleSkipCustomization}
       />
