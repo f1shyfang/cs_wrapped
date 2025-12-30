@@ -81,7 +81,7 @@ export default function UsernameInput({
           transition={{ delay: 0.3 }}
           className="text-white/70 mb-12 text-lg"
         >
-          Enter your GitHub username to see your year in code ✨
+          Enter your GitHub username to see your year in code
         </motion.p>
 
         {/* Form */}
@@ -143,7 +143,7 @@ export default function UsernameInput({
           transition={{ delay: 0.5 }}
           className="text-white/40 text-sm mt-8"
         >
-          ✨ No login required • Uses public GitHub data only
+          No login required • Uses public GitHub data only
         </motion.p>
       </motion.div>
     </div>

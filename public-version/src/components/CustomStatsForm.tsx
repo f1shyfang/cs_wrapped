@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { CustomStats, LeetCodeStats, defaultCustomStats } from "@/types/stats";
+import { CustomStats, LeetCodeStats, PublicGitHubStats, defaultCustomStats } from "@/types/stats";
 import { Plus, X, Save, Sparkles } from "lucide-react";
 
 interface CustomStatsFormProps {
   initialStats?: CustomStats;
   initialLeetCode?: LeetCodeStats | null;
+  githubStats?: PublicGitHubStats | null;
   onSave: (custom: CustomStats, leetcode: LeetCodeStats | null) => void;
   onSkip: () => void;
 }
@@ -15,12 +16,23 @@ interface CustomStatsFormProps {
 export default function CustomStatsForm({
   initialStats,
   initialLeetCode,
+  githubStats,
   onSave,
   onSkip,
 }: CustomStatsFormProps) {
-  const [stats, setStats] = useState<CustomStats>(
-    initialStats || defaultCustomStats
-  );
+  // Pre-populate commits/PRs from GitHub API if available
+  // Use GitHub API data as the starting point, user can override
+  const getInitialStats = (): CustomStats => {
+    const base = initialStats || defaultCustomStats;
+    return {
+      ...base,
+      // Prefer GitHub API data if available, otherwise use saved/default value
+      totalCommits: githubStats?.totalCommits || base.totalCommits || 0,
+      totalPRs: githubStats?.totalPRs || base.totalPRs || 0,
+    };
+  };
+
+  const [stats, setStats] = useState<CustomStats>(getInitialStats);
   const [leetcode, setLeetcode] = useState<LeetCodeStats | null>(
     initialLeetCode || null
   );
@@ -68,12 +80,16 @@ export default function CustomStatsForm({
             {/* GitHub Stats (manual entry for private data) */}
             <div className="bg-white/5 rounded-2xl p-4">
               <h3 className="text-lg font-semibold text-white mb-4">
-                📊 GitHub Stats (Private repos not included in public API)
+                GitHub Stats
               </h3>
+              <p className="text-white/50 text-xs mb-4">
+                {githubStats?.totalCommits ? `Found ${githubStats.totalCommits} recent push events. ` : ''}
+                Enter your actual commit count for accurate stats.
+              </p>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-white/70 text-sm mb-2">
-                    Total Commits (2024)
+                    Total Commits ({new Date().getFullYear()})
                   </label>
                   <input
                     type="number"
@@ -109,7 +125,7 @@ export default function CustomStatsForm({
                 </div>
                 <div>
                   <label className="block text-white/70 text-sm mb-2">
-                    🔥 Longest Streak (days)
+                    Longest Streak (days)
                   </label>
                   <input
                     type="number"
@@ -127,7 +143,7 @@ export default function CustomStatsForm({
                 </div>
                 <div>
                   <label className="block text-white/70 text-sm mb-2">
-                    ⭐ Favorite Project
+                    Favorite Project
                   </label>
                   <input
                     type="text"
@@ -149,7 +165,7 @@ export default function CustomStatsForm({
             <div className="bg-white/5 rounded-2xl p-4">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-white">
-                  🧩 LeetCode Stats
+                  LeetCode Stats
                 </h3>
                 <button
                   onClick={() => setShowLeetCode(!showLeetCode)}
@@ -251,7 +267,7 @@ export default function CustomStatsForm({
             {/* Hackathons */}
             <div className="bg-white/5 rounded-2xl p-4">
               <h3 className="text-lg font-semibold text-white mb-4">
-                🏆 Hackathons & Events
+                Hackathons & Events
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -274,7 +290,7 @@ export default function CustomStatsForm({
                 </div>
                 <div>
                   <label className="block text-white/70 text-sm mb-2">
-                    Wins / Prizes 🥇
+                    Wins / Prizes
                   </label>
                   <input
                     type="number"
@@ -296,12 +312,12 @@ export default function CustomStatsForm({
             {/* AI & Learning */}
             <div className="bg-white/5 rounded-2xl p-4">
               <h3 className="text-lg font-semibold text-white mb-4">
-                🤖 AI & Learning
+                AI & Learning
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-white/70 text-sm mb-2">
-                    ☕ Coffee Chats
+                    Coffee Chats
                   </label>
                   <input
                     type="number"
@@ -319,7 +335,7 @@ export default function CustomStatsForm({
                 </div>
                 <div>
                   <label className="block text-white/70 text-sm mb-2">
-                    📚 Courses Completed
+                    Courses Completed
                   </label>
                   <input
                     type="number"
@@ -341,7 +357,7 @@ export default function CustomStatsForm({
             {/* Certifications */}
             <div className="bg-white/5 rounded-2xl p-4">
               <h3 className="text-lg font-semibold text-white mb-4">
-                🎓 Certifications
+                Certifications
               </h3>
               <div className="flex gap-2 mb-3">
                 <input
@@ -382,7 +398,7 @@ export default function CustomStatsForm({
             {/* Fun Stats */}
             <div className="bg-white/5 rounded-2xl p-4">
               <h3 className="text-lg font-semibold text-white mb-4">
-                ☕ Fun Stats
+                Fun Stats
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -405,7 +421,7 @@ export default function CustomStatsForm({
                 </div>
                 <div>
                   <label className="block text-white/70 text-sm mb-2">
-                    🌙 All-Nighters Pulled
+                    All-Nighters Pulled
                   </label>
                   <input
                     type="number"

@@ -36,6 +36,8 @@ export interface PublicGitHubStats {
   totalStars: number;
   totalForks: number;
   topRepositories: Repository[];
+  totalCommits: number;
+  totalPRs: number;
 }
 
 export interface LeetCodeStats {

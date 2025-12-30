@@ -2,6 +2,15 @@ import { GitHubUser, Repository, PublicGitHubStats } from "@/types/stats";
 
 const GITHUB_API = "https://api.github.com";
 
+interface GitHubEvent {
+  type: string;
+  created_at: string;
+  payload: {
+    commits?: Array<{ sha: string }>;
+    action?: string;
+  };
+}
+
 export async function fetchPublicGitHubStats(
   username: string
 ): Promise<PublicGitHubStats> {
@@ -24,6 +33,42 @@ export async function fetchPublicGitHubStats(
     throw new Error("Failed to fetch repositories");
   }
   const repositories: Repository[] = await reposResponse.json();
+
+  // Fetch events to count push events and PRs (last 90 days max from API)
+  // Note: GitHub Events API doesn't include commit counts, so we count push events
+  let totalPushEvents = 0;
+  let totalPRs = 0;
+  
+  try {
+    // GitHub Events API returns up to 10 pages of 30 events each (300 events max)
+    // Fetch multiple pages to get more data
+    const currentYear = new Date().getFullYear();
+    
+    for (let page = 1; page <= 3; page++) {
+      const eventsResponse = await fetch(
+        `${GITHUB_API}/users/${username}/events?per_page=100&page=${page}`
+      );
+      if (!eventsResponse.ok) break;
+      
+      const events: GitHubEvent[] = await eventsResponse.json();
+      if (events.length === 0) break;
+      
+      for (const event of events) {
+        const eventYear = new Date(event.created_at).getFullYear();
+        if (eventYear === currentYear) {
+          if (event.type === "PushEvent") {
+            // Each push event typically represents one or more commits
+            totalPushEvents += 1;
+          } else if (event.type === "PullRequestEvent" && event.payload.action === "opened") {
+            totalPRs += 1;
+          }
+        }
+      }
+    }
+  } catch {
+    // Events API failed, continue without commit data
+    console.warn("Failed to fetch events data");
+  }
 
   // Filter out forks and calculate stats
   const ownRepos = repositories.filter((repo) => !repo.fork);
@@ -68,6 +113,8 @@ export async function fetchPublicGitHubStats(
     totalStars,
     totalForks,
     topRepositories,
+    totalCommits: totalPushEvents, // Note: This is push events, not individual commits
+    totalPRs,
   };
 }
 

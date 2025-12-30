@@ -124,6 +124,7 @@ export default function Home() {
       <CustomStatsForm
         initialStats={loadCustomStats()}
         initialLeetCode={leetcodeStats || wrappedData?.leetcode || null}
+        githubStats={githubStats}
         onSave={handleCustomStatsSave}
         onSkip={handleSkipCustomization}
       />

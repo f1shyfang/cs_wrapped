@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import {
   Sparkles,
-  Share2,
   Download,
   GitCommit,
   Code2,
@@ -32,30 +31,6 @@ export default function SummarySlide({
     if (leetcode && leetcode.totalSolved >= 500) return "🧠 Algorithm Master";
     if (codeforces && codeforces.rating >= 1900) return "🏆 Competitive Legend";
     return "✨ Growing Developer";
-  };
-
-  const handleShare = async () => {
-    const text = `Check out my CS Wrapped ${year}! 🚀\n\n` +
-      `📊 ${custom.totalCommits} commits\n` +
-      (leetcode ? `💡 ${leetcode.totalSolved} LeetCode problems\n` : '') +
-      (codeforces ? `🏆 ${codeforces.rating} Codeforces rating\n` : '') +
-      `\n#CSWrapped #Developer`;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `CS Wrapped ${year}`,
-          text: text,
-        });
-      } catch {
-        // User cancelled or share failed
-        navigator.clipboard.writeText(text);
-        alert('Stats copied to clipboard!');
-      }
-    } else {
-      navigator.clipboard.writeText(text);
-      alert('Stats copied to clipboard!');
-    }
   };
 
   return (
@@ -187,19 +162,6 @@ export default function SummarySlide({
         transition={{ delay: 1.1 }}
         className="relative z-10 mt-8 flex gap-4"
       >
-        <motion.button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleShare();
-          }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl gradient-bg-pink-orange font-semibold text-white shadow-lg"
-        >
-          <Share2 className="h-5 w-5" />
-          Share
-        </motion.button>
-
         <motion.button
           onClick={(e) => {
             e.stopPropagation();
